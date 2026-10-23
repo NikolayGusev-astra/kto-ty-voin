@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Кто ты, воин? — конструктор конфигурации агента</title>
+<style>
+:root{--bg:#101014;--fg:#e8e6e3;--dim:#9a978f;--acc:#d4a017;--card:#1a1a20;--line:#2c2c34}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 Georgia,serif}
+main{max-width:640px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.5em;margin:.2em 0}h1 em{color:var(--acc);font-style:normal}
+h2{font-size:1.15em;margin:0 0 .6em}
+p.dim{color:var(--dim)}
+label{display:block;margin:.5em 0 .2em}
+textarea,input[type=text]{width:100%;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:10px;font:inherit}
+textarea{min-height:72px;resize:vertical}
+.chk{display:block;margin:.35em 0;cursor:pointer}
+.chk input{margin-right:.5em;accent-color:var(--acc)}
+nav{margin-top:22px;display:flex;gap:10px}
+button{background:var(--acc);color:#111;border:0;border-radius:6px;padding:11px 20px;font:inherit;font-weight:bold;cursor:pointer}
+button.ghost{background:transparent;color:var(--dim);border:1px solid var(--line)}
+button:disabled{opacity:.4;cursor:default}
+.step{display:none}.step.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:10px 0}
+.warn{border-left:3px solid var(--acc)}
+pre{white-space:pre-wrap;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;font:14px/1.5 monospace;user-select:all}
+a{color:var(--acc)}
+footer{margin-top:40px;color:var(--dim);font-size:.85em}
+.counter{color:var(--dim);font-size:.9em;margin-bottom:14px}
+</style>
+</head>
+<body>
+<main>
+<div class="counter" id="counter"></div>
+
+<div class="step on" id="s0">
+<h1>Кто ты, <em>воин</em>?</h1>
+<p>Конструктор из скилла <a href="https://github.com/NikolayGusev-astra/kto-ty-voin">kto-ty-voin</a>: восемь шагов, после которых у тебя на руках паспорт для агента - роль, рутины, данные, границы и подобранные классы инструментов.</p>
+<div class="card warn"><strong>Ничего не сохраняется и никуда не отправляется.</strong> Страница статическая, ответы живут только в этом окне браузера. Закрыл вкладку - данных нет. Никаких аккаунтов и карт не нужно.</div>
+<button onclick="go(1)">Начать</button>
+<footer>Название - из «Трои»: прежде чем отвечать, чем полезен, агент узнаёт, кто ты. Вопрос герольда «Кто ты, воин?» Ахиллес закрывал одним словом; тебе потребуется восемь шагов.</footer>
+</div>
+
+<div class="step" id="s1">
+<h2>1. Чем занимаешься?</h2>
+<p class="dim">Роль своими словами: профессия, ремесло, чем заняты руки. Например: «сварщик на производстве», «веду бухгалтерию для шести ИП», «шью на заказ».</p>
+<textarea id="q_role" placeholder="Хоть одно слово - расширять не обязательно"></textarea>
+<nav><button class="ghost" onclick="go(0)">Назад</button><button onclick="go(2)">Дальше</button></nav>
+</div>
+
+<div class="step" id="s2">
+<h2>2. Что делаешь руками каждый день?</h2>
+<p class="dim">Про последний рабочий день лучше всего: что делали утром, между делами, вечером. Не «как обычно», а как было вчера.</p>
+<textarea id="q_daily" placeholder="Например: утром фура, днём тетради, вечером родительский чат"></textarea>
+<nav><button class="ghost" onclick="go(1)">Назад</button><button onclick="go(3)">Дальше</button></nav>
+</div>
+
+<div class="step" id="s3">
+<h2>3. Где живут твои данные?</h2>
+<p class="dim">Можно несколько.</p>
+<label class="chk"><input type="checkbox" data-g="data" value="таблицы и Excel">Таблицы и Excel</label>
+<label class="chk"><input type="checkbox" data-g="data" value="почта">Почта</label>
+<label class="chk"><input type="checkbox" data-g="data" value="мессенджеры и чаты">Мессенджеры и чаты</label>
+<label class="chk"><input type="checkbox" data-g="data" value="документы и PDF">Документы и PDF</label>
+<label class="chk"><input type="checkbox" data-g="data" value="CRM, Jira и прочие системы">CRM, Jira и прочие системы</label>
+<label class="chk"><input type="checkbox" data-g="data" value="бумага и блокноты">Бумага и блокноты</label>
+<nav><button class="ghost" onclick="go(2)">Назад</button><button onclick="go(4)">Дальше</button></nav>
+</div>
+
+<div class="step" id="s4">
+<h2>4. Что бесит или съедает время?</h2>
+<p class="dim">Самое раздражающее за последнюю неделю. Конкретика ценнее: не «отчёты», а «четвертной отчёт собираю руками из трёх мест».</p>
+<textarea id="q_pain" placeholder="Например: один и тот же документ веду в двух местах"></textarea>
+<nav><button class="ghost" onclick="go(3)">Назад</button><button onclick="go(5)">Дальше</button></nav>
+</div>
+
+<div class="step" id="s5">
+<h2>5. На какой машине будешь работать с агентом?</h2>
+<label class="chk"><input type="checkbox" data-g="hw" value="свежая Windows 10/11">Windows 10/11</label>
+<label class="chk"><input type="checkbox" data-g="hw" value="старая Windows (7/8)">Старая Windows (7/8)</label>
+<label class="chk"><input type="checkbox" data-g="hw" value="Mac">Mac</label>
+<label class="chk"><input type="checkbox" data-g="hw" value="Linux">Linux</label>
+<label class="chk"><input type="checkbox" data-g="hw" value="в основном телефон">В основном телефон</label>
+<label class="chk"><input type="checkbox" data-g="acc" value="есть почта и онлайн-оплата">Есть почта и карта для онлайн-платежей</label>
+<label class="chk"><input type="checkbox" data-g="acc" value="почти нет аккаунтов, без онлайн-платежей">Почти нет аккаунтов, онлайн не плачу</label>
+<nav><button class="ghost" onclick="go(4)">Назад</button><button onclick="go(6)">Дальше</button></nav>
+</div>
+
+<div class="step" id="s6">
+<h2>6. Что агенту нельзя?</h2>
+<p class="dim">Границы - самое ценное в профиле. Можно несколько.</p>
+<label class="chk"><input type="checkbox" data-g="bnd" value="детские или клиентские данные наружу не отправлять">Детские или клиентские данные наружу не отправлять</label>
+<label class="chk"><input type="checkbox" data-g="bnd" value="публичные действия - только по явному да">Публичные действия - только по явному «да»</label>
+<label class="chk"><input type="checkbox" data-g="bnd" value="пароли, ключи и доступы не трогать">Пароли, ключи и доступы не трогать</label>
+<label class="chk"><input type="checkbox" data-g="bnd" value="особых ограничений нет">Особых ограничений нет</label>
+<nav><button class="ghost" onclick="go(5)">Назад</button><button onclick="go(7)">Дальше</button></nav>
+</div>
+
+<div class="step" id="s7">
+<h2>7. Витрина: что из этого отзывается?</h2>
+<p class="dim">Типовые возможности агента, каждая одной строкой. Отметь, что показалось про тебя.</p>
+<label class="chk"><input type="checkbox" data-g="vit" value="итоги и сводки по расписанию">Итоги и сводки по расписанию: агент сам собирает статусы раз в неделю, без твоей пятницы</label>
+<label class="chk"><input type="checkbox" data-g="vit" value="разбор документов и логов в сводку">Документы и логи в сводку: кидаешь файл - получаешь суть, дыры и что делать</label>
+<label class="chk"><input type="checkbox" data-g="vit" value="черновики писем и текстов">Черновики писем и текстов: из пары твоих фраз - готовый черновик на проверку</label>
+<label class="chk"><input type="checkbox" data-g="vit" value="поиск по справочникам и таблицам">Справочники и таблицы: спрашиваешь в чате - получаешь строку из таблицы</label>
+<label class="chk"><input type="checkbox" data-g="vit" value="напоминания и мониторинг сроков">Напоминания и сроки: агент сам следит и предупреждает заранее</label>
+<label class="chk"><input type="checkbox" data-g="vit" value="пока не знаю - показать на моей задаче">Пока не знаю - пусть покажет на моей задаче</label>
+<nav><button class="ghost" onclick="go(6)">Назад</button><button onclick="showResult()">Собрать паспорт</button></nav>
+</div>
+
+<div class="step" id="s8">
+<h2>Твой паспорт для агента</h2>
+<div id="warnings"></div>
+<p>Скопируй текст ниже и отдай своему агенту (или тому, кто его настраивает). Это профиль из твоих ответов - агент по нему подберёт скиллы и инструменты под твои задачи.</p>
+<pre id="out"></pre>
+<nav><button onclick="copyOut()">Скопировать текст</button><button class="ghost" onclick="go(7)">Изменить ответы</button></nav>
+<p class="dim">Настраиваешь Hermes Agent? Скажи агенту: «загрузи скилл kto-ty-voin и подбери мне конфигурацию по этому профилю». Установить скилл: <a href="https://github.com/NikolayGusev-astra/kto-ty-voin">github.com/NikolayGusev-astra/kto-ty-voin</a></p>
+<footer>Страница статическая: ответы не сохраняются и никуда не отправляются. Рекомендации в паспорте - классы инструментов; живой каталог скиллов проверяет твой агент.</footer>
+</div>
+</main>
+
+<script>
+var steps=["s0","s1","s2","s3","s4","s5","s6","s7","s8"];
+function go(n){steps.forEach(function(s,i){document.getElementById(s).className="step"+(i===n?" on":"")});
+document.getElementById("counter").textContent=n>0&&n<8?("Шаг "+n+" из 7"):"";window.scrollTo(0,0)}
+function vals(g){return [].slice.call(document.querySelectorAll('input[data-g="'+g+'"]:checked')).map(function(i){return i.value})}
+function txt(id){return document.getElementById(id).value.trim()}
+function line(label,v){return v?label+": "+v+"\n":""}
+function list(label,v){return v&&v.length?label+": "+v.join("; ")+"\n":""}
+function showResult(){
+var role=txt("q_role"),daily=txt("q_daily"),pain=txt("q_pain");
+var data=vals("data"),hw=vals("hw"),acc=vals("acc"),bnd=vals("bnd"),vit=vals("vit");
+var w=document.getElementById("warnings");w.replaceChildren();
+hw.forEach(function(h){
+if(h.indexOf("старая Windows")>=0){w.appendChild(wcard("Старая Windows: свежий Hermes Agent туда может не установиться (нужна современная ОС). Это не тупик - попроси агента или автора инструкции про «ручной путь сейчас и план на будущее»."))}
+if(h.indexOf("телефон")>=0){w.appendChild(wcard("Только телефон: агенту обычно нужен компьютер рядом - учти это в планах."))}});
+function wcard(text){var d=document.createElement("div");d.className="card warn";d.textContent=text;return d}
+var passport="Профиль для агента (конструктор «Кто ты, воин?»)\n\n";
+passport+=line("Роль",role);
+passport+=line("Рутины руками каждый день",daily);
+passport+=list("Где живут данные",data);
+passport+=line("Бесит и съедает время",pain);
+passport+=list("Машина",hw);
+passport+=list("Аккаунты и платежи",acc);
+passport+=list("Границы: агенту нельзя",bnd);
+passport+=list("Возможности, которые отозвались",vit);
+passport+="\nЗадача для агента: по этому профилю подбери мне скиллы и инструменты из каталога, каждый предложи с проверкой, и покажи, как это выглядит в моей рутине. Ничего не устанавливай без моего явного «да» по каждому пункту.\n";
+document.getElementById("out").textContent=passport;go(8)}
+function copyOut(){var t=document.getElementById("out").textContent;
+if(navigator.clipboard){navigator.clipboard.writeText(t)}else{var r=document.createRange();r.selectNode(document.getElementById("out"));getSelection().removeAllRanges();getSelection().addRange(r);document.execCommand("copy")}}
+</script>
+</body>
+</html>
